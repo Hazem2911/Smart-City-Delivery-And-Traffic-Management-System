@@ -3,6 +3,9 @@
 ## Class Diagram
 
 ```mermaid
+---
+id: 077b564f-088b-44c7-9556-d42c144086a3
+---
 classDiagram
     direction TB
 
