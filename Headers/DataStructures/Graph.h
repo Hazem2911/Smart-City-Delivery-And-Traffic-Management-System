@@ -9,6 +9,7 @@
 #include <limits>
 #include <algorithm>
 #include <set>
+#include <tuple>
 
 using namespace std;
 
@@ -25,13 +26,15 @@ private:
 
 public:
     Graph(int vertices = 0, bool directed = false);
-    ~Graph();
+    ~Graph() = default;
 
     // Basic operations
+    void addVertex(int v);
     void addEdge(int u, int v, double weight = 1.0);
     void removeEdge(int u, int v);
     void updateWeight(int u, int v, double newWeight);
     void displayGraph() const;
+    bool containsVertex(int v) const;
     int getNumVertices() const;
     vector<int> getAllVertices() const;
 
@@ -40,12 +43,12 @@ public:
     vector<int> DFS(int start);
 
     // Shortest paths
-    vector<double> Dijkstra(int source);
-    vector<double> BellmanFord(int source);
+    vector<double> Dijkstra(int source, vector<int>& parent);
+    vector<double> BellmanFord(int source, vector<int>& parent);
 
     // MST
-    vector<pair<int, int>> PrimMST();
-    vector<pair<int, int>> KruskalMST();
+    vector<tuple<int, int, double>> PrimMST();
+    vector<tuple<int, int, double>> KruskalMST();
 
     // DAG operations
     vector<int> TopologicalSort();
@@ -60,6 +63,7 @@ public:
     double getEdgeWeight(int u, int v) const;
     int getNumEdges() const;
     vector<int> reconstructPath(vector<int>& parent, int source, int destination);
+    void clear();
 };
 
 #endif // GRAPH_H
