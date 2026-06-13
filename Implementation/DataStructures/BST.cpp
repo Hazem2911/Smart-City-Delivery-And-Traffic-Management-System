@@ -53,26 +53,16 @@ BSTNode* DeliveryBST::removeHelper(BSTNode* node, int deliveryId)
 {
     if (node == nullptr)
         return nullptr;
-    
-    if (deliveryId < node->delivery.id)
+
+    if (node->delivery.id == deliveryId)
     {
-        node->left = removeHelper(node->left, deliveryId);
-    }
-    else if (deliveryId > node->delivery.id)
-    {
-        node->right = removeHelper(node->right, deliveryId);
-    }
-    else
-    {
-        // Node found
-        
         // Case 1: No children (leaf node)
         if (node->left == nullptr && node->right == nullptr)
         {
             delete node;
             return nullptr;
         }
-        
+
         // Case 2: One child
         if (node->left == nullptr)
         {
@@ -80,20 +70,24 @@ BSTNode* DeliveryBST::removeHelper(BSTNode* node, int deliveryId)
             delete node;
             return temp;
         }
-        
+
         if (node->right == nullptr)
         {
             BSTNode* temp = node->left;
             delete node;
             return temp;
         }
-        
-        // Case 3: Two children
+
+        // Case 3: Two children — replace with inorder successor
         BSTNode* minRight = findMinNode(node->right);
         node->delivery = minRight->delivery;
         node->right = removeHelper(node->right, minRight->delivery.id);
+        return node;
     }
-    
+
+    // Tree is ordered by deadline, not ID — search both subtrees
+    node->left = removeHelper(node->left, deliveryId);
+    node->right = removeHelper(node->right, deliveryId);
     return node;
 }
 
@@ -114,14 +108,15 @@ BSTNode* DeliveryBST::searchHelper(BSTNode* node, int deliveryId) const
 {
     if (node == nullptr)
         return nullptr;
-    
-    if (deliveryId == node->delivery.id)
+
+    if (node->delivery.id == deliveryId)
         return node;
-    
-    if (deliveryId < node->delivery.id)
-        return searchHelper(node->left, deliveryId);
-    else
-        return searchHelper(node->right, deliveryId);
+
+    // Tree is ordered by deadline, not ID — must scan both subtrees
+    BSTNode* found = searchHelper(node->left, deliveryId);
+    if (found != nullptr)
+        return found;
+    return searchHelper(node->right, deliveryId);
 }
 
 // ========== BOUNDARY OPERATIONS ==========

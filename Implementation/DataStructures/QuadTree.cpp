@@ -39,29 +39,28 @@ void QuadTree::insert(const Location& location)
 void QuadTree::insertHelper(QuadTreeNode* node, const Location& loc)
 {
     if (!isInBounds(loc, node))
-    {
-        cout << "Location " << loc.id << " is out of bounds for this node!\n";
         return;
-    }
-    
-    // If node has children (already subdivided)
+
+    // If node has children (already subdivided), route to correct quadrant only
     if (node->NW != nullptr)
     {
-        insertHelper(node->NW, loc);
-        insertHelper(node->NE, loc);
-        insertHelper(node->SW, loc);
-        insertHelper(node->SE, loc);
+        if (isInBounds(loc, node->NW))
+            insertHelper(node->NW, loc);
+        else if (isInBounds(loc, node->NE))
+            insertHelper(node->NE, loc);
+        else if (isInBounds(loc, node->SW))
+            insertHelper(node->SW, loc);
+        else
+            insertHelper(node->SE, loc);
         return;
     }
-    
-    // Add location to current node
+
+    // Leaf node: add location
     node->locations.push_back(loc);
-    
+
     // Subdivide if capacity exceeded
-    if (node->locations.size() > node->capacity)
-    {
+    if ((int)node->locations.size() > node->capacity)
         subdivideHelper(node);
-    }
 }
 
 void QuadTree::subdivideHelper(QuadTreeNode* node)

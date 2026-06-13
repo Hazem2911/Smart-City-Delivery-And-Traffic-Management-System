@@ -208,8 +208,17 @@ vector<int> Graph::DFS(int start)
 
 vector<double> Graph::Dijkstra(int source, vector<int>& parent)
 {
-    vector<double> dist(1000, numeric_limits<double>::max());
-    parent.assign(1000, -1);
+    int maxId = source;
+    for (const auto& p : adjList)
+    {
+        maxId = max(maxId, p.first);
+        for (const auto& e : p.second)
+            maxId = max(maxId, e.first);
+    }
+    int sz = maxId + 1;
+
+    vector<double> dist(sz, numeric_limits<double>::max());
+    parent.assign(sz, -1);
 
     dist[source] = 0;
     priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
@@ -246,8 +255,17 @@ vector<double> Graph::Dijkstra(int source, vector<int>& parent)
 
 vector<double> Graph::BellmanFord(int source, vector<int>& parent)
 {
-    vector<double> dist(1000, numeric_limits<double>::max());
-    parent.assign(1000, -1);
+    int maxId = source;
+    for (const auto& p : adjList)
+    {
+        maxId = max(maxId, p.first);
+        for (const auto& e : p.second)
+            maxId = max(maxId, e.first);
+    }
+    int sz = maxId + 1;
+
+    vector<double> dist(sz, numeric_limits<double>::max());
+    parent.assign(sz, -1);
 
     dist[source] = 0;
 
@@ -428,7 +446,14 @@ vector<tuple<int, int, double>> Graph::KruskalMST()
 
     sort(edges.begin(), edges.end());
 
-    UnionFind uf(1000);
+    int maxId = 0;
+    for (const auto& p : adjList)
+    {
+        maxId = max(maxId, p.first);
+        for (const auto& e : p.second)
+            maxId = max(maxId, e.first);
+    }
+    UnionFind uf(maxId + 1);
 
     for (const auto& [weight, u, v] : edges)
     {
